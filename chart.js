@@ -10,7 +10,7 @@ function lastSearchToDatums(res) {
 			thumb64: r.image[1]["#text"],
 			thumb126: r.image[2]["#text"],
 			thumb300: r.image[3]["#text"]
-		}	
+		};
 	}
 
 	if (res.results.albummatches.album == undefined)
@@ -42,13 +42,18 @@ $(document).ready(function() {
 	]);
 	
 	$("#albumsearch").bind('typeahead:selected', function(e, a) {
-		addAlbumToChart(a);
+		//addAlbumToChart(a);
+		selectedAlbums.push(a);
 	});
 	$("#albumsearch").bind("typeahead:autocompleted", function(e, a, b, c) {
 		console.log(e, a, b, c);
 	});
 	$("#albumsearch").bind('keypress', function(e) {
 
+	});
+	$("#cvs").click(function(e) {
+		var mpos = relMouseCoords(e);
+		console.log("canvas click", mpos);
 	});
 	var cvs = document.getElementById("cvs");
 	dim = calcCanvasSize(sch_top50);
@@ -57,16 +62,38 @@ $(document).ready(function() {
 	renderChartPlaceholder(cvs, sch_top50);
 });
 
-function getImage(album, size) {
+//thank you: http://stackoverflow.com/questions/55677/how-do-i-get-the-coordinates-of-a-mouse-click-on-a-canvas-element1
+function relMouseCoords(event) {
+    var totalOffsetX = 0;
+    var totalOffsetY = 0;
+    var canvasX = 0;
+    var canvasY = 0;
+    var currentElement = event.target;
+
+    do{
+        totalOffsetX += currentElement.offsetLeft - currentElement.scrollLeft;
+        totalOffsetY += currentElement.offsetTop - currentElement.scrollTop;
+    }
+    while(currentElement = currentElement.offsetParent)
+
+    canvasX = event.pageX - totalOffsetX;
+    canvasY = event.pageY - totalOffsetY;
+
+    return {x:canvasX, y:canvasY}
+}
+
+function getImageURL(album, size) {
 	//try to degrade somewhat gracefully
 	var t32  = album.thumb32;
 	var t64  = album.thumb64  || t32;
 	var t126 = album.thumb126 || t64;
 	var t300 = album.thumb300 || t126;
-	if (size <= 32)	 return t32;
-	if (size <= 64)	 return t64;
-	if (size <= 126) return t126;
-	return t300;
+	var ret = t300;
+	if (size <= 32)          ret = t32;
+	else if (size <= 64)	 ret = t64;
+	else if (size <= 126)    ret = t126;
+	console.log(size, "->", ret);
+	return ret.replace("userserve-ak.last.fm", "occident");
 }
 
 function addAlbumToChart(album) {
@@ -82,3 +109,23 @@ function addAlbumToChart(album) {
 	img.src = album.thumb300.replace("userserve-ak.last.fm", "occident");
 	console.log(img.src);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
