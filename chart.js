@@ -1,8 +1,4 @@
-//model-ish for top-N charts
-
-//the album object we have currently selected in the Typeahead thingy, or null if this is invalid
-//(invalid meaning we have to 
-currentSelectedAlbum = null;
+selectedAlbums = [];
 
 function lastSearchToDatums(res) {
 	function alb2dat(r) {
@@ -10,6 +6,7 @@ function lastSearchToDatums(res) {
 			value: r.name,
 			artist: r.artist,
 			tokens: (r.name + " " +r.artist).split(" "),
+			thumb32: r.image[0]["#text"],
 			thumb64: r.image[1]["#text"],
 			thumb126: r.image[2]["#text"],
 			thumb300: r.image[3]["#text"]
@@ -45,7 +42,6 @@ $(document).ready(function() {
 	]);
 	
 	$("#albumsearch").bind('typeahead:selected', function(e, a) {
-		console.log(e);
 		addAlbumToChart(a);
 	});
 	$("#albumsearch").bind("typeahead:autocompleted", function(e, a, b, c) {
@@ -61,12 +57,19 @@ $(document).ready(function() {
 	renderChartPlaceholder(cvs, sch_top50);
 });
 
+function getImage(album, size) {
+	//try to degrade somewhat gracefully
+	var t32  = album.thumb32;
+	var t64  = album.thumb64  || t32;
+	var t126 = album.thumb126 || t64;
+	var t300 = album.thumb300 || t126;
+	if (size <= 32)	 return t32;
+	if (size <= 64)	 return t64;
+	if (size <= 126) return t126;
+	return t300;
+}
+
 function addAlbumToChart(album) {
-	if (window.cax == undefined) {
-		window.cax = window.cay = 0;
-	}
-	var canvas = document.getElementById("cvs");
-	var ctx = canvas.getContext("2d");
 	var img = new Image();
 	img.onload = function() {
 		ctx.drawImage(img, cax, cay);
