@@ -1,44 +1,19 @@
-/* custom font! */
-/* ------------ */
-
-@font-face {
-  font-family: Prociono;
-  src: url(../font/Prociono-Regular-webfont.ttf);
-}
-
-/* scaffolding */
-/* ----------- */
-
-html {
-  overflow-y: scroll;
-  *overflow-x: hidden;
-}
 
 .container {
-  max-width: 1024px;
+  max-width: 1400px;
   margin: 0 auto;
   text-align: center;
   
 }
 
-.tt-dropdown-menu,
-.gist {
+.tt-dropdown-menu {
   text-align: left;
 }
 
-/* base styles */
-/* ----------- */
-
 html {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 18px;
   line-height: 1.2;
   color: #333;
-}
-
-.title,
-.example-name {
-  font-family: Prociono;
 }
 
 .typeahead,
@@ -123,4 +98,9 @@ html {
 }
 
 .res-artistname {
+}
+
+#cvs {
+	margin-top: 32px;
+	border: 2px solid grey;
 }

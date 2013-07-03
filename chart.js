@@ -15,9 +15,12 @@ function lastSearchToDatums(res) {
 			thumb300: r.image[3]["#text"]
 		}	
 	}
+
+	if (res.results.albummatches.album == undefined)
+		return [{value: "No results for search"}];
 	if (res.results.albummatches.album.length)
 		return $.map(res.results.albummatches.album, alb2dat);
-	else return [alb2dat(res.results.albummatches.album)];
+	return [alb2dat(res.results.albummatches.album)];
 }
 
 function albumSearchURL(query, N) {
@@ -37,7 +40,6 @@ $(document).ready(function() {
 			template: "<img width=\"64\" height=\"64\" class=\"res-albumart\" src=\"{{thumb64}}\">"
 				+"<div class=\"res-text res-artistname\">{{artist}}</div> "
 				+"<div class=\"res-text res-albumname\">{{value}}</div>",
-			
 			engine: Hogan
 		}	 
 	]);
@@ -52,22 +54,28 @@ $(document).ready(function() {
 	$("#albumsearch").bind('keypress', function(e) {
 
 	});
+	var cvs = document.getElementById("cvs");
+	dim = calcCanvasSize(sch_top50);
+	cvs.width  = dim.width;
+	cvs.height = dim.height;
+	renderChartPlaceholder(cvs, sch_top50);
 });
 
 function addAlbumToChart(album) {
 	if (window.cax == undefined) {
 		window.cax = window.cay = 0;
 	}
-	var ctx = document.getElementById("cvs").getContext("2d");
+	var canvas = document.getElementById("cvs");
+	var ctx = canvas.getContext("2d");
 	var img = new Image();
 	img.onload = function() {
 		ctx.drawImage(img, cax, cay);
 		cax += (img.width + 10);
-		if (cax > 500) {
+		if (cax + img.width > canvas.width) {
 			cax = 0;
 			cay += (img.height + 10);
 		}			
 	};
-	img.src = album.thumb126.replace("userserve-ak.last.fm", "occident");
+	img.src = album.thumb300.replace("userserve-ak.last.fm", "occident");
 	console.log(img.src);
 }
